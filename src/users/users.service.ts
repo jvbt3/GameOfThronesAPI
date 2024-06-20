@@ -18,23 +18,23 @@ export class UsersService {
     return this.userModel.find();
   }
 
-  findOne(nome: string) {
-    return this.userModel.findOne({ username: nome });
+  findOne(username: string) {
+    return this.userModel.findOne({ username });
   }
 
   findById(id: number) {
-    return this.userModel.findOne({ id: id });
+    return this.userModel.findOne({ id });
   }
 
   update(id: number, createUserDto: CreateUserDto) {
-    return this.userModel.updateOne({ id: id }, createUserDto);
+    return this.userModel.updateOne({ id }, createUserDto);
   }
 
   remove(id: number) {
-    return this.userModel.deleteOne({ id: id });
+    return this.userModel.deleteOne({ id });
   }
 
-  private async userHash(pass) {
+  private async userHash(pass: string) {
     const saltOrRound = 10;
     const passHashed = bcrypt.hash(pass, saltOrRound);
     return passHashed;
