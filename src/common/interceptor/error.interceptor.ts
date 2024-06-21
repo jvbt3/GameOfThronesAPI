@@ -3,14 +3,15 @@ import {
   NestInterceptor,
   ExecutionContext,
   CallHandler,
+  HttpException,
 } from '@nestjs/common';
-import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { LogsService } from '../../logs/logs.service';
 import { CreateLogDto } from '../../logs/dto/create-log.dto';
 
 @Injectable()
-export class LoggingInterceptor implements NestInterceptor {
+export class ErrorLogger implements NestInterceptor {
   constructor(private readonly logsService: LogsService) {}
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
@@ -18,24 +19,23 @@ export class LoggingInterceptor implements NestInterceptor {
     const method = request.method;
     const route = request.url;
 
-    console.log('Before...');
-
-    const now = Date.now();
     return next.handle().pipe(
-      tap(async () => {
-        const responseTime = `${Date.now() - now}ms`;
-        const statusCode = context.switchToHttp().getResponse().statusCode;
-        const message = `After... ${responseTime}`;
-        console.log(message);
+      catchError(async (err) => {
+        console.log(err);
+        const statusCode = err instanceof HttpException ? err.getStatus() : 500;
+        const message = `Error occurred: ${err.message}`;
+        console.error(message);
 
         const log: CreateLogDto = {
-          statusCode: statusCode.toString(),
+          statusCode,
           message,
           method,
           route,
-          type: 'timerRequest',
+          type: 'errorLog',
         };
-        this.logsService.create(log);
+        await this.logsService.create(log);
+
+        return throwError(() => err);
       }),
     );
   }

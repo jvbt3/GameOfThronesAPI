@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CreateLogDto } from './dto/create-log.dto';
-import { UpdateLogDto } from './dto/update-log.dto';
-import { Log } from './entities/log.schema';
+import { Log } from './schema/log.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
@@ -21,7 +20,7 @@ export class LogsService {
     return this.logModel.findById(id);
   }
 
-  update(id: string, updateLogDto: UpdateLogDto) {
+  update(id: string, updateLogDto: CreateLogDto) {
     return this.logModel.findByIdAndUpdate(id, updateLogDto);
   }
 
