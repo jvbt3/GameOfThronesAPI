@@ -25,11 +25,12 @@ export class LoggingInterceptor implements NestInterceptor {
       tap(async () => {
         const responseTime = `${Date.now() - now}ms`;
         const statusCode = context.switchToHttp().getResponse().statusCode;
-
-        console.log(`After... ${responseTime}`);
+        const message = `After... ${responseTime}`;
+        console.log(message);
 
         const log: CreateLogDto = {
           statusCode: statusCode.toString(),
+          message,
           method,
           route,
         };

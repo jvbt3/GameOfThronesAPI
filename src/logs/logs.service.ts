@@ -1,33 +1,31 @@
 import { Injectable } from '@nestjs/common';
 import { CreateLogDto } from './dto/create-log.dto';
 import { UpdateLogDto } from './dto/update-log.dto';
+import { Log } from './entities/log.schema';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class LogsService {
-  private log: CreateLogDto[] = [];
+  constructor(@InjectModel(Log.name) private logModel: Model<Log>) {}
 
   create(createLogDto: CreateLogDto) {
-    this.log.push(createLogDto);
-    return createLogDto;
+    return this.logModel.create(createLogDto);
   }
 
   findAll() {
-    return this.log;
+    return this.logModel.find();
   }
 
-  findOne(id: string) {
-    return this.log.find((i) => i.id == id);
+  findById(id: string) {
+    return this.logModel.findById(id);
   }
 
   update(id: string, updateLogDto: UpdateLogDto) {
-    const indexObj = this.log.findIndex((i) => i.id == id);
-    this.log[indexObj] = updateLogDto;
-    return updateLogDto;
+    return this.logModel.findByIdAndUpdate(id, updateLogDto);
   }
 
   remove(id: string) {
-    const indexObj = this.log.findIndex((i) => i.id == id);
-    this.log.splice(indexObj, 1);
-    return 'Remove success!';
+    return this.logModel.findByIdAndDelete(id);
   }
 }

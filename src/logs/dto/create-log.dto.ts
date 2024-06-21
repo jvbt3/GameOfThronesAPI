@@ -3,4 +3,5 @@ export class CreateLogDto {
   statusCode: number;
   method: string;
   route: string;
+  message: string;
 }

@@ -26,8 +26,8 @@ export class LogsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.logsService.findOne(id);
+  findById(@Param('id') id: string) {
+    return this.logsService.findById(id);
   }
 
   @Patch(':id')

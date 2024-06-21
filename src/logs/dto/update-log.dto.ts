@@ -3,4 +3,5 @@ export class UpdateLogDto {
   statusCode: number;
   method: string;
   route: string;
+  message: string;
 }
