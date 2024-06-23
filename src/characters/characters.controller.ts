@@ -9,7 +9,8 @@ import {
   UseGuards,
   HttpException,
   HttpStatus,
-  BadRequestException,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { CharactersService } from './characters.service';
 import { CreateCharacterDto } from './dto/create-character.dto';
@@ -17,7 +18,7 @@ import { AuthGuard } from '../auth/auth.guards';
 
 @Controller('characters')
 export class CharactersController {
-  constructor(private readonly charactersService: CharactersService) {}
+  constructor(private readonly charactersService: CharactersService) { }
 
   @UseGuards(AuthGuard)
   @Post('/create')
@@ -34,9 +35,10 @@ export class CharactersController {
 
   @UseGuards(AuthGuard)
   @Post()
-  async createOne(@Body() createCharacterDto: CreateCharacterDto) {
+  @UsePipes(new ValidationPipe())
+  createOne(@Body() createCharacterDto: CreateCharacterDto) {
     try {
-      return await this.charactersService.createOne(createCharacterDto);
+      return this.charactersService.createOne(createCharacterDto);
     } catch (error) {
       throw new HttpException(
         'Falha ao criar personagem',
@@ -73,6 +75,7 @@ export class CharactersController {
 
   @UseGuards(AuthGuard)
   @Patch(':id')
+  @UsePipes(new ValidationPipe())
   async update(
     @Param('id') id: string,
     @Body() createCharacterDto: CreateCharacterDto,

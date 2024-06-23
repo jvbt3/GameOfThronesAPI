@@ -11,7 +11,7 @@ import { CreateLogDto } from '../../logs/dto/create-log.dto';
 
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
-  constructor(private readonly logsService: LogsService) {}
+  constructor(private readonly logsService: LogsService) { }
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const request = context.switchToHttp().getRequest();
@@ -24,10 +24,10 @@ export class LoggingInterceptor implements NestInterceptor {
     return next.handle().pipe(
       tap(async () => {
         const responseTime = `${Date.now() - now}ms`;
-        const statusCode = context.switchToHttp().getResponse().statusCode;
-        const message = `After... ${responseTime}`;
+        const message = `The request took ${responseTime}ms`;
         console.log(message);
 
+        const statusCode = context.switchToHttp().getResponse().statusCode;
         const log: CreateLogDto = {
           statusCode: statusCode.toString(),
           message,
